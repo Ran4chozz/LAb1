@@ -1,5 +1,5 @@
 from django.forms import ModelForm
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse
 from .models import PersonInfo
 from django.views.generic import ListView, DetailView
@@ -30,12 +30,45 @@ def GetPersonInfo(request):
 class PersonForm(ModelForm):
     class Meta:
         model = PersonInfo
-        fields = ['FirstName', 'LastName', 'MiddleName', 'Description', 'Phone', 'Birthday']
+        fields = ['FirstName', 'LastName', 'MiddleName', 'Description', 'Phone', 'Birthday',
+                  'Country', 'City', 'Position', 'HaveChildren']
 
 
 def person_list(request, template_name='persons/person_list.html'):
     person = PersonInfo.objects.all()
-    return  render(request, template_name, {'persons': person})
+    return render(request, template_name, {'persons': person})
+
+
+def person_view(request, pk, template_name='persons/person_detail.html'):
+    person = get_object_or_404(PersonInfo, pk=pk)
+    return render(request, template_name, {'person':person})
+
+
+def person_edit(requst, pk, template_name='persons/person_form.html'):
+    person = get_object_or_404(PersonInfo, pk=pk)
+    form = PersonForm(requst.POST or None, instance=person)
+    if form.is_valid():
+        form.save()
+        return redirect('person_list')
+
+    return render(requst, template_name, {'form': form})
+
+
+def person_create(request, template_name='persons/person_form.html'):
+    form = PersonForm(request.POST or None)
+    if form.is_valid():
+        form.save()
+        return  redirect('person_list')
+
+    return render(request, template_name, {'form': form})
+
+
+def person_delete(request, pk, temlate_name='persons/person_confirm_delete.html'):
+    person= get_object_or_404(PersonInfo, pk=pk)
+    if request.method == 'POST':
+        person.delete()
+        return  redirect('person_list')
+    return render(request, temlate_name, {'object': person.LastName})
 
 
 class PersonList(ListView):

@@ -23,6 +23,12 @@ class PersonInfo(models.Model):
     )
     Position = models.ForeignKey('Position', on_delete=models.PROTECT,
                                  null=True)
+    Country = models.TextField(
+        null=True
+    )
+    City = models.TextField(
+        null=True
+    )
 
     def __str__(self):
         return self.name
@@ -33,11 +39,3 @@ class PersonInfo(models.Model):
 
 class Position(models.Model):
     Name = models.TextField()
-
-
-class Children(models.Model):
-    FirstName = models.TextField()
-    MiddleName = models.TextField()
-    LastName = models.TextField()
-    PersonInfo = models.ForeignKey('PersonInfo', on_delete=models.CASCADE,
-                                   null=True)
