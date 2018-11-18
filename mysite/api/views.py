@@ -7,7 +7,7 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 
 
-def index(request):
+def  index(request):
     return HttpResponse("<h3>Hello world!</h3>")
 
 
